@@ -1,0 +1,77 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Template • TodoMVC</title>
+		<link rel="stylesheet" href="{% static 'todo/css/node_modules/todomvc-common/base.css' %}">
+		<link rel="stylesheet" href="{% static 'todo/css/node_modules/todomvc-app-css/index.css' %}">
+		<!-- CSS overrides - remove if you don't need it -->
+		<link rel="stylesheet" href="{% static 'todo/css/app.css' %}">
+	</head>
+	<body>
+		<section class="todoapp">
+			<header class="header">
+				<h1>todos</h1>
+				<form action="{% url 'create' %}" method="post">
+					{% csrf_token %}
+					<input class="new-todo" placeholder="Mau cari apa?" name="namatitle" autofocus>
+				</form>
+				
+			</header>
+			<!-- This section should be hidden by default and shown when there are todos -->
+			<section class="main">
+				<input id="toggle-all" class="toggle-all" type="checkbox">
+				<label for="toggle-all">Mark all as complete</label>
+				<ul class="todo-list">
+					{% if items %}						
+						{% for item in items %}
+							<li {% if item.status %} class="completed" {% endif %}>
+								<div class="view">
+									<form action="{% url 'update' item.id %}" method="post">
+										{% csrf_token %}
+										<input class="toggle" type="checkbox" onclick="this.form.submit()" {% if item.status %} checked {% endif %}>
+										<label>{{ item.title }}</label>
+										<a href="{% url 'delete' item.id %}" class="destroy"></a>
+									</form>
+								</div>
+							</li>
+						{% endfor %}
+					{% endif %}
+										
+				</ul>
+			</section>
+			<!-- This footer should hidden by default and shown when there are todos -->
+			<footer class="footer">
+				<!-- This should be `0 items left` by default -->
+				<span class="todo-count"><strong>0</strong> item left</span>
+				<!-- Remove this if you don't implement routing -->
+				<ul class="filters">
+					<li>
+						<a {% if request.path == '/todo/' %} class="selected" {% endif %} href="{% url 'index' %}">All</a>
+					</li>
+					<li>
+						<a {% if request.path == '/todo/done/' %} class="selected" {% endif %} href="{% url 'done' %}">Done</a>
+					</li>
+					<li>
+						<a {% if request.path == '/todo/pending/' %} class="selected" {% endif %} href="{% url 'pending' %}">Pending</a>
+					</li>
+				</ul>
+				<!-- Hidden if no completed items are left ↓ -->
+				<a href="{% url 'delete_all' %}" class="clear-completed">Delete all</a>
+			</footer>
+		</section>
+		<footer class="info">
+			<p>Double-click to edit a todo</p>
+			<!-- Remove the below line ↓ -->
+			<p>Template by <a href="http://sindresorhus.com">Sindre Sorhus</a></p>
+			<!-- Change this out with your name and url ↓ -->
+			<p>Created by <a href="http://todomvc.com">you</a></p>
+			<p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+		</footer>
+		<!-- Scripts here. Don't remove ↓ -->
+		<script src="node_modules/todomvc-common/base.js"></script>
+		<script src="js/app.js"></script>
+	</body>
+</html>
